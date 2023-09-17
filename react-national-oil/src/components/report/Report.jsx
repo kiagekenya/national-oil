@@ -29,28 +29,33 @@ const Report = () => {
 
 
     const handleFilter = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:4000/employee/${employeeNumber}?startDate=${startDate}&endDate=${endDate}`
-          );
-          const data = await response.json();
-          console.log('Response data:', data);
-          if (response.ok) {
-            if (Array.isArray(data)) {
-              setEmployeeData(data);
-            } else {
-              setEmployeeData([]);
-              console.error('Invalid response format: expected an array.');
-            }
+      try {
+        const response = await fetch(
+          `http://localhost:4000/employee/${employeeNumber}?startDate=${startDate}&endDate=${endDate}`
+        );
+        const data = await response.json();
+        console.log('Response data:', data);
+    
+        if (response.ok) {
+          if (Array.isArray(data)) {
+            setEmployeeData(data);
+          } else if (data.staffNumber) {
+            // If data is an object, convert it to an array with a single element
+            setEmployeeData([data]);
           } else {
             setEmployeeData([]);
-            console.error(data.message);
+            console.error('Invalid response format: expected an array or object with staffNumber.');
           }
-        } catch (error) {
+        } else {
           setEmployeeData([]);
-          console.error('Error:', error);
+          console.error(data.message);
         }
-      };
+      } catch (error) {
+        setEmployeeData([]);
+        console.error('Error:', error);
+      }
+    };
+    
 
       const getDatesInRange = (startDate, endDate) => {
         const dates = [];
@@ -151,7 +156,7 @@ const tableData = employeeData.map((employee) => {
   const duration = calculateDuration(employee.checkInDate, employee.checkOutDate);
 
   return [
-    { content: employee.staffNumber, styles: { className: rowClassName } },
+    { content: employee.name, styles: { className: rowClassName } },
     { content: new Date(employee.checkInDate).toLocaleDateString(), styles: { className: rowClassName } },
     { content: new Date(employee.checkInDate).toLocaleTimeString(), styles: { className: rowClassName } },
     { content: employee.checkOutDate ? new Date(employee.checkOutDate).toLocaleDateString() : "Pending", styles: { className: rowClassName } },
@@ -338,7 +343,7 @@ doc.autoTable({
 
     return (
       <tr key={employee._id} className={rowClassName}>
-        <td>{employee.staffNumber}</td>
+        <td>{employee.name}</td>
         <td>{new Date(employee.checkInDate).toLocaleDateString()}</td>
         <td>{new Date(employee.checkInDate).toLocaleTimeString()}</td>
         <td>{employee.checkOutDate ? new Date(employee.checkOutDate).toLocaleDateString() : 'Pending'}</td>
