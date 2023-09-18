@@ -18,7 +18,7 @@ const All = () => {
 
           <ul>
       <li>
-        <Link to="/report"  className="report">Admin</Link>
+        <Link to="/signup"  className="report">Admin</Link>
         </li>
       
     </ul>
