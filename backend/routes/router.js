@@ -75,7 +75,7 @@ router.get('/employee/:staffNumber', async (req, res) => {
 
 
   
-  //checkout route 
+ 
 
   router.post('/employee/checkout', async (req, res) => {
     const { staffNumberOut } = req.body;
@@ -107,7 +107,7 @@ router.get('/employee/:staffNumber', async (req, res) => {
       const { name, email, password } = req.body;
   
       
-      const user = await User.findOne({ email });
+      const user = await schemas.User.findOne({ email });
       if (user) {
         return res.status(400).json({ message: 'Email already in use' });
       }
@@ -116,40 +116,46 @@ router.get('/employee/:staffNumber', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
   
       
-      const newUser = new User({ name, email, password: hashedPassword });
+      const newUser = new schemas.User({ name, email, password: hashedPassword });
       await newUser.save();
   
+      
       res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
       console.error('Registration error:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+  
 
   router.post('/api/login', async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log('Request body:', req.body);
   
-      
-      const user = await User.findOne({ email });
+      const user = await schemas.User.findOne({ email });
   
       if (!user) {
         return res.status(401).json({ message: 'Authentication failed' });
       }
   
-      
       const passwordMatch = await bcrypt.compare(password, user.password);
   
       if (!passwordMatch) {
         return res.status(401).json({ message: 'Authentication failed' });
       }
   
-      res.status(200).json({ message: 'Login successful' });
+      
+      console.log('Login successful');
+      res.json({ redirectUrl: '/report' });
+     
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+  
+  
   
   
   
