@@ -6,7 +6,9 @@ import  CheckOut from './components/checkout/CheckOut';
 import All from './components/all/All';
 import Splash from './components/splash/splash';
 import Report from './components/report/Report';
+import Signin from './components/Authin/authin';
 import Signup from './components/Auth/auth';
+import Admin from './components/admin/Admin';
 import './styles.css'
 
 
@@ -34,7 +36,10 @@ export default function App() {
         )}
          <Route exact path='/checkin' element={< Check/>}></Route>
                 <Route exact path='/checkout' element={< CheckOut />}></Route>
-                <Route exact path= '/signup' element={< Signup />}></Route>
+                <Route exact path= '/signin' element={< Signin />}></Route>
+                <Route exact path= '/signup' element={<Signup />}></Route>
+                <Route exact path= '/report' element={<Report />}></Route>
+                <Route exact path= '/admin'  element={<Admin />}></Route>
         </Routes>
       </BrowserRouter>
     );

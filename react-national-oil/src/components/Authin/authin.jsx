@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
 
 const Authin = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
   
     const handleLogin = async () => {
-      try {
-        const response = await axios.post('/api/login', { email, password });
-        console.log(response.data); 
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
+        try {
+          const response = await axios.post('/api/login', { email, password });
+          console.log(response);
+      
+          
+          if (response.data.redirectUrl) {
+            
+            navigate(response.data.redirectUrl); 
+          } else {
+            console.log(response.data);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
   return (
   
 <div>
@@ -50,8 +58,14 @@ const Authin = () => {
               </p>
             </div>
             <div className="btn-fields">
-            <button>SignUp</button>
+            
             <button onClick={handleLogin}>SignIn</button>
+            <ul>
+      <li>
+        <Link to="/signup"  className="btn-fields">SignUp</Link>
+        </li>
+      
+    </ul>
             </div>
           </form>
         </div>

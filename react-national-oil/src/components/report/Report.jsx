@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LOGO from '../../assets/nock j.png'
 import HR from '../../assets/hr.jpg'
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -235,14 +236,15 @@ doc.autoTable({
         </div>
       </div>
       <div className="sidebar">
-        <a href="admin.html">
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faTachometerAlt} />
-          <h5>Dashboard</h5>
-        </a>
+      <ul>
+      <li>
+        <Link to="/admin"  className="report"> <FontAwesomeIcon icon={faTachometerAlt} />Dashboard</Link>
+        </li>  
+    </ul>     
         <a href="/" >
           <span className="dicons"></span>
           <FontAwesomeIcon icon={faUserCircle} />
+          
           <h5>Employees</h5>
         </a>
         <a href="/">

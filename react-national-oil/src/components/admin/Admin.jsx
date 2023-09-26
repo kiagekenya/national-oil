@@ -1,6 +1,12 @@
 import React from 'react'
 import LOGO from '../../assets/nock j.png'
 import HR from '../../assets/hr.jpg'
+import { Link } from 'react-router-dom';
+import { faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+
 
 const Admin = () => {
       const showAlert = () => {
@@ -17,49 +23,19 @@ const Admin = () => {
             </div>
             <div className="sidebar">
               <a href="/" className="active">
-                <span className="dicons">
-                  <ion-icon name="grid-outline"></ion-icon>
-                </span>
+              <FontAwesomeIcon icon={faTachometerAlt} />
                 <h5>Dashboard</h5>
               </a>
-              <a href="/" onClick={showAlert}>
-                <span className="dicons">
-                  <ion-icon name="people-outline"></ion-icon>
-                </span>
-                <h5>Employees</h5>
-              </a>
-              <a href="analytics.html">
-                <span className="dicons">
-                  <ion-icon name="analytics-outline"></ion-icon>
-                </span>
-                <h5>Analytics</h5>
-              </a>
-              
-              <a href="report.html">
-                <span className="dicons">
-                  <ion-icon name="albums-outline"></ion-icon>
-                </span>
-                <h5>Reports</h5>
-              </a>
-              <a href="settings.html">
-                <span className="dicons">
-                  <ion-icon name="settings-outline"></ion-icon>
-                </span>
-                <h5>Settings</h5>
-              </a>
-              <a href="/" id="add-employee-link">
-                <span className="dicons">
-                  <ion-icon name="person-add-outline"></ion-icon>
-                </span>
-                <h5>Add Employee</h5>
-              </a>
-              <a href="/" id="logout-link">
-                <span className="dicons">
-                  <ion-icon name="log-out-outline"></ion-icon>
-                </span>
-                <h5>Logout</h5>
-              </a>
-              
+             <ul>
+      <li>
+        <Link to="/report"  className="report"><FontAwesomeIcon icon={faFileAlt} />Report</Link>
+        </li>  
+    </ul>   
+    <ul>
+      <li>
+        <Link to="/report"  className="report"><FontAwesomeIcon icon={faUserCircle} />Employees</Link>
+        </li>  
+    </ul>       
             </div>
           </aside>
           <main>
