@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import axios from 'axios';
 import LOGO from '../../assets/nock j.png'
 import HR from '../../assets/hr.jpg'
 import { Link } from 'react-router-dom';
@@ -9,9 +10,67 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 
 const Admin = () => {
-      const showAlert = () => {
-        // Function implementation
-      };
+      
+  const [selectedDate, setSelectedDate] = useState('');
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [checkInCount, setCheckInCount] = useState(0);
+
+
+  const [checkInPercentage, setCheckInPercentage] = useState(0);
+
+  useEffect(() => {
+    if (selectedDate) {
+      
+      axios
+        .get(`/api/recent-activities?date=${selectedDate}`)
+        .then((response) => {
+          const recentActivities = response.data;
+
+          
+          const staffNumbers = [...new Set(recentActivities.map((activity) => activity.staffNumber))];
+
+         
+          setCheckInCount(staffNumbers.length);
+
+          
+          const percentage = (staffNumbers.length / 210) * 100;
+          setCheckInPercentage(percentage);
+
+          
+          axios
+            .get(`/api/get-names-departments?staffNumbers=${staffNumbers.join(',')}`)
+            .then((dataResponse) => {
+              const namesMap = {};
+              const departmentsMap = {};
+
+              dataResponse.data.forEach((data) => {
+                namesMap[data.staffNumber] = data.name;
+                departmentsMap[data.staffNumber] = data.department;
+              });
+
+              
+              const recentActivitiesWithNamesAndDepartments = recentActivities.map((activity) => ({
+                ...activity,
+                name: namesMap[activity.staffNumber] || 'Name not found',
+                department: departmentsMap[activity.staffNumber] || 'Department not found',
+              }));
+
+              setRecentActivities(recentActivitiesWithNamesAndDepartments);
+            })
+            .catch((error) => {
+              console.error('Error fetching names and departments:', error);
+            });
+        })
+        .catch((error) => {
+          console.error('Error fetching recent activities:', error);
+        });
+    }
+  }, [selectedDate]);
+
+  const circleRadius = 36;
+  const circumference = 2 * Math.PI * circleRadius;
+  const dashOffset = circumference * (1 - checkInPercentage / 100);
+  
     
       return (
         <div className="admin-container">
@@ -33,7 +92,7 @@ const Admin = () => {
     </ul>   
     <ul>
       <li>
-        <Link to="/report"  className="report"><FontAwesomeIcon icon={faUserCircle} />Employees</Link>
+        <Link to="/list"  className="report"><FontAwesomeIcon icon={faUserCircle} />Employees</Link>
         </li>  
     </ul>       
             </div>
@@ -42,50 +101,64 @@ const Admin = () => {
             <h1>Dashboard</h1>
     
             <div className="date">
-              <input type="date" />
-            </div>
+  <input
+    type="date"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+  />
+</div>
+
             <div className="insights">
               <div className="ontime">
                 <span className="time">
                   <ion-icon name="timer-outline"></ion-icon>
                 </span>
                 <div className="middle">
-                  <div className="left">
-                    <h3>Number of check-ins</h3>
-                    <h1>50 employees</h1>
-                  </div>
-                  <div className="progress">
-                    <svg>
-                      <circle cx="38" cy="38" r="36"></circle>
-                    </svg>
-                    <div className="number">
-                      <p>45%</p>
-                    </div>
-                  </div>
-                </div>
+            <div className="left">
+              <h3>Number of check-ins</h3>
+              <h1>{checkInCount} employee(s)</h1>
+            </div>
+            <div className="progress">
+              <svg>
+                <circle cx="38" cy="38" r="36"></circle>
+              </svg>
+              <div className="number">
+               
+                <p>{((checkInCount / 210) * 100).toFixed(2)}%</p>
+              </div>
+            </div>
+          </div>
                 <small className="text-muted">By 8:24 a.m</small>
               </div>
     
-              <div className="dayperf">
-                <span className="time">
-                  <ion-icon name="today-outline"></ion-icon>
-                </span>
-                <div className="middle">
-                  <div className="left">
-                    <h3>Number of check-ins</h3>
-                    <h1>112 employees</h1>
-                  </div>
-                  <div className="progress">
-                    <svg>
-                      <circle cx="38" cy="38" r="36"></circle>
-                    </svg>
-                    <div className="number">
-                      <p>84%</p>
-                    </div>
-                  </div>
-                </div>
-                <small className="text-muted">Today</small>
-              </div>
+              
+      <div className="dayperf">
+        <span className="time">
+          <ion-icon name="today-outline"></ion-icon>
+        </span>
+        <div className="middle">
+          <div className="left">
+            <h3>Total check-ins for {selectedDate}</h3>
+            <h1>{checkInCount} employee(s)</h1>
+          </div>
+          <div className="progress">
+            <svg>
+              <circle cx="38" cy="38" r={circleRadius}></circle>
+              <circle
+                className="progress-circle"
+                cx="38"
+                cy="38"
+                r={circleRadius}
+                style={{ strokeDashoffset: dashOffset }}
+              ></circle>
+            </svg>
+            <div className="number">
+              <p>{checkInPercentage.toFixed(2)}%</p>
+            </div>
+          </div>
+        </div>
+        <small className="text-muted">Today</small>
+      </div>
     
               <div className="weekperf">
                 <span className="time">
@@ -101,78 +174,33 @@ const Admin = () => {
               </div>
             </div>
             <div className="recent">
-              <h2>Recent activity</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Staff no</th>
-                    <th>Department</th>
-                    <th>Check-in</th>
-                    <th>Check-out</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Jackson Imani</td>
-                    <td>1067</td>
-                    <td>Upstream</td>
-                    <td>8:11 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Brian Bolo</td>
-                    <td>1003</td>
-                    <td>Finance</td>
-                    <td>8:07 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Sharon Rotich</td>
-                    <td>870</td>
-                    <td>Upstream</td>
-                    <td>8:04 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Eva Sankok</td>
-                    <td>1100</td>
-                    <td>Procurement</td>
-                    <td>8:00 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Duncun Samwel</td>
-                    <td>975</td>
-                    <td>Engineering</td>
-                    <td>7:57 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Millicent Aduor</td>
-                    <td>650</td>
-                    <td>Sales&amp;Markerting</td>
-                    <td>7:55 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Anthony Oluoch</td>
-                    <td>645</td>
-                    <td>Finance</td>
-                    <td>7:50 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                  <tr>
-                    <td>Lily Munyanyu</td>
-                    <td>812</td>
-                    <td>Human resource</td>
-                    <td>7:46 am</td>
-                    <td className="warning">Pending</td>
-                  </tr>
-                </tbody>
-              </table>
-              <a href="/">Show All</a>
-            </div>
+  <h2>Recent activity</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Staff no</th>
+        <th>Department</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+      </tr>
+    </thead>
+    <tbody>
+      {recentActivities.map((activity, index) => (
+        <tr key={index}>
+          <td>{activity.name}</td>
+          <td>{activity.staffNumber}</td>
+          <td>{activity.department}</td>
+          <td>{new Date(activity.checkInDate).toLocaleTimeString()}</td>
+        
+          <td>{activity.checkOutDate ? new Date(activity.checkOutDate).toLocaleTimeString() : 'Pending'}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <a href="/">Show All</a>
+</div>
+
           </main>
     
           <div className="right">

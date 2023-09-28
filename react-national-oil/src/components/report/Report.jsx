@@ -241,39 +241,19 @@ doc.autoTable({
         <Link to="/admin"  className="report"> <FontAwesomeIcon icon={faTachometerAlt} />Dashboard</Link>
         </li>  
     </ul>     
-        <a href="/" >
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faUserCircle} />
-          
-          <h5>Employees</h5>
-        </a>
-        <a href="/">
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faChartLine} />
-          <h5>Analytics</h5>
-        </a>
+        
+        
         <a href="/" className="active">
           <span className="dicons"></span>
           <FontAwesomeIcon icon={faFileAlt} />
           <h5>Reports</h5>
         </a>
-        <a href="settings.html">
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faCog} />
-
-          <h5>Settings</h5>
-        </a>
-        <a href="/">
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faUserPlus} />
-          <h5>Add Employee</h5>
-        </a>
-        <a href="/" id="logout-link">
-          <span className="dicons"></span>
-          <FontAwesomeIcon icon={faSignOutAlt} />
-
-          <h5>Logout</h5>
-        </a>
+        <ul>
+      <li>
+        <Link to="/list"  className="report"> <FontAwesomeIcon icon={faUserCircle} />Employees</Link>
+        </li>  
+    </ul>  
+        
         
       </div>
     </aside>

@@ -9,6 +9,7 @@ import Report from './components/report/Report';
 import Signin from './components/Authin/authin';
 import Signup from './components/Auth/auth';
 import Admin from './components/admin/Admin';
+import List from './components/list/List';
 import './styles.css'
 
 
@@ -40,6 +41,7 @@ export default function App() {
                 <Route exact path= '/signup' element={<Signup />}></Route>
                 <Route exact path= '/report' element={<Report />}></Route>
                 <Route exact path= '/admin'  element={<Admin />}></Route>
+                <Route exact path= '/list' element={<List />}></Route>
         </Routes>
       </BrowserRouter>
     );
