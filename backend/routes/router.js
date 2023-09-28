@@ -154,6 +154,74 @@ router.get('/employee/:staffNumber', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+
+
+ 
+router.get('/api/recent-activities', async (req, res) => {
+  try {
+    const selectedDate = req.query.date;
+
+    
+    const recentActivities = await schemas.Employees.find({
+      checkInDate: {
+        $gte: new Date(selectedDate), 
+        $lt: new Date(new Date(selectedDate).setDate(new Date(selectedDate).getDate() + 1)), 
+      },
+    });
+
+    res.json(recentActivities);
+  } catch (error) {
+    console.error('Error fetching recent activities:', error);
+    res.status(500).json('Internal server error');
+  }
+});
+
+
+
+
+
+router.get('/api/get-names-departments', async (req, res) => {
+  const staffNumbersParam = req.query.staffNumbers;
+
+  
+  const staffNumbers = staffNumbersParam.split(',');
+
+  try {
+    
+    const namesDepartments = await schemas.CompanyEmployees.find(
+      { staffNumber: { $in: staffNumbers } },
+      'staffNumber name department'
+    );
+
+    if (namesDepartments.length > 0) {
+      
+      res.json(namesDepartments);
+    } else {
+      res.status(404).json('No names and departments found for the given staff numbers');
+    }
+  } catch (error) {
+    console.error('Error fetching names and departments:', error);
+    res.status(500).json('Internal server error');
+  }
+});
+
+router.get('/api/employees', async (req, res) => {
+  try {
+    
+    const employees = await schemas.CompanyEmployees.find({}, 'name staffNumber department');
+
+    if (employees.length > 0) {
+      
+      res.json(employees);
+    } else {
+      res.status(404).json('No employee details found');
+    }
+  } catch (error) {
+    console.error('Error fetching employee details:', error);
+    res.status(500).json('Internal server error');
+  }
+});
+
   
   
   
